@@ -5,6 +5,8 @@ import (
     "strings"
     "time"
 
+    "entando_go_tools/pkg/support/docker"
+
     "entando_go_tools/pkg/util/xmlnav"
 
     "entando_go_tools/pkg/util/sys/spawn"
@@ -14,15 +16,8 @@ import (
     "entando_go_tools/pkg/util/sys"
 )
 
-type DockerImageInfo struct {
-    ImageName   string
-    ImageTag    string
-    ImageOrg    string
-    ImageFqname string
-}
-
-func ExtractDockerImageLocation() DockerImageInfo {
-    ret := DockerImageInfo{}
+func ExtractDockerImageLocation() docker.DockerImageInfo {
+    ret := docker.DockerImageInfo{}
     gocmd := &exec.Cmd{}
 
     mvnRes, _ := sys.ExecLongRunningTask("the POM analysis", 5*time.Second, 60*time.Second,
