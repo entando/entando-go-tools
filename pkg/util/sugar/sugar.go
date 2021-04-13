@@ -22,14 +22,14 @@ type SweetArr []string
 
 func (arr SweetArr) At(index int) SweetResult {
     if len(arr) < index+1 {
-        return NoSweet()
+        return BadSweet(fmt.Errorf("argument #%d was not provided", index))
     }
     return SomeSweet(arr[index])
 }
 
 func SweetRes(value interface{}, err error) SweetResult {
     if err != nil {
-        return NoSweetErr(err)
+        return BadSweet(err)
     }
-    return SweetResult{value:value}
+    return SweetResult{value: value}
 }

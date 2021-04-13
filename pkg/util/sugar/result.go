@@ -44,6 +44,6 @@ func NoSweet() SweetResult {
     return SweetResult{"", nil}
 }
 
-func NoSweetErr(err error) SweetResult {
+func BadSweet(err error) SweetResult {
     return SweetResult{"", err}
 }
