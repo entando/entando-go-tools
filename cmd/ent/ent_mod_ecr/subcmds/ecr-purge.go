@@ -2,7 +2,6 @@ package subcmds
 
 import (
     "fmt"
-    "os"
     "strings"
 
     . "entando_go_tools/pkg/util/sugar"
@@ -19,26 +18,25 @@ import (
     "github.com/spf13/cobra"
 
     . "entando_go_tools/pkg/util/log/def"
-
-    "entando_go_tools/pkg/ent/maven/pom"
 )
 
 func init() {
     moduleCmd.AddCommand(&cobra.Command{
-        Use:   "purge",
+        Use:   "purge image-org image-name",
         Short: "uninstalls a bundle and removes all its objects",
         Long:  `uninstalls a bundle and removes all its objects`,
         Run: func(cmd *cobra.Command, args []string) {
-            _ = os.Chdir("/home/wrt/work/prj/entando/_test_area/external-test-area/ent/myBundle/testdir")
-            ecrPurge()
+            ecrPurge(
+                SweetArr(args).At(0).StringOrFail("please provide the image organization"),
+                SweetArr(args).At(1).StringOrFail("please provide the image name"),
+            )
         },
     })
     ParsePurgeParams(moduleCmd)
 }
 
-func ecrPurge() {
-    dockerImage := pom.ExtractDockerImageLocation()
-    baseBundleName := dockerImage.ImageOrg + "-" + dockerImage.ImageName
+func ecrPurge(imageOrg, imageName string) {
+    var baseBundleName = imageOrg + "-" + imageName
     var normalizedBundleName = baseBundleName
     if len(normalizedBundleName) > 31 {
         normalizedBundleName = normalizedBundleName[0:31]
@@ -185,9 +183,9 @@ func delResourceDirectly(resourceType string, selector []interface{}) error {
 }
 
 func ParsePurgeParams(cmd *cobra.Command) {
-    cmd.PersistentFlags().BoolVar(&PurgeParams.Related, "purge-related", false, "version to install")
-    cmd.PersistentFlags().BoolVar(&PurgeParams.Volumes, "purge-volumes", false, "version to install")
-    cmd.PersistentFlags().BoolVar(&PurgeParams.DryRun, "dry-run", false, "version to install")
+    cmd.PersistentFlags().BoolVar(&PurgeParams.Related, "purge-related", false, "also purge the related objects")
+    cmd.PersistentFlags().BoolVar(&PurgeParams.Volumes, "purge-volumes", false, "also purges the volumes")
+    cmd.PersistentFlags().BoolVar(&PurgeParams.DryRun, "dry-run", false, "dry execution")
 }
 
 type PurgeParamsType struct {
